@@ -12,16 +12,17 @@ export default async function handler(req, res) {
       ]);
 
       if (error) {
-        throw error;
+        console.error('Error al insertar en Supabase:', error);
+        return res.status(500).json({ message: 'Error al guardar el pedido en Supabase', error });
       }
 
       // Respuesta exitosa si el pedido se guarda en Supabase
-      res.status(200).json({ message: 'Pedido guardado exitosamente' });
+      return res.status(200).json({ message: 'Pedido guardado exitosamente', data });
     } catch (error) {
-      console.error('Error al guardar el pedido:', error);
-      res.status(500).json({ message: 'Error guardando el pedido' });
+      console.error('Error interno del servidor:', error);
+      return res.status(500).json({ message: 'Error interno del servidor', error });
     }
   } else {
-    res.status(405).json({ message: 'Método no permitido' });
+    return res.status(405).json({ message: 'Método no permitido' });
   }
 }
