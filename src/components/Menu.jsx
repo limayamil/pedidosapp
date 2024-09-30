@@ -1,24 +1,23 @@
 // src/components/Menu.jsx
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../../supabase';
+import React, { useState } from 'react';
 
 const Menu = () => {
-  const [menuItems, setMenuItems] = useState([]);
+  const [menuItems] = useState([
+    { id: 1, name: 'Hamburguesa', price: 10 },
+    { id: 2, name: 'Pizza', price: 15 },
+    { id: 3, name: 'Ensalada', price: 7 },
+    { id: 4, name: 'Bebida', price: 3 },
+    { id: 5, name: 'Papas fritas', price: 5 },
+  ]);
+  
   const [order, setOrder] = useState([]);
 
-  useEffect(() => {
-    const fetchMenu = async () => {
-      const { data, error } = await supabase.from('menu').select('*');
-      if (error) console.error(error);
-      else setMenuItems(data);
-    };
-    fetchMenu();
-  }, []);
-
+  // Función para agregar ítems al pedido
   const addToOrder = (item) => {
     setOrder([...order, item]);
   };
 
+  // Función para enviar el pedido
   const placeOrder = async () => {
     const res = await fetch('/api/order', {
       method: 'POST',
@@ -29,7 +28,7 @@ const Menu = () => {
     });
 
     const data = await res.json();
-    alert(data.message);  // Alerta al cliente que el pedido fue recibido
+    alert(data.message); // Muestra mensaje en pantalla
   };
 
   return (
@@ -40,6 +39,14 @@ const Menu = () => {
           <li key={item.id}>
             {item.name} - ${item.price}
             <button onClick={() => addToOrder(item)}>Agregar</button>
+          </li>
+        ))}
+      </ul>
+      <h2>Pedido</h2>
+      <ul>
+        {order.map((item, index) => (
+          <li key={index}>
+            {item.name} - ${item.price}
           </li>
         ))}
       </ul>
